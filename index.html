@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindsurance: Protect Your Cognitive Potential</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Vue.js CDN (for quick prototyping) -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- The 'component' tag dynamically renders the current screen component.
+             The @navigate listener captures the custom 'navigate' event emitted by child components. -->
+        <transition name="fade" mode="out-in">
+            <!-- initial-data prop is used to pass data down from the main app state to the current component -->
+            <component :is="currentScreenComponent" @navigate="navigateTo" :initial-data="cognitiveData"></component>
+        </transition>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
