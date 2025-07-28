@@ -147,9 +147,9 @@ button:disabled { background-color: #b0b0b0; cursor: not-allowed; }
     color: #555;
 }
 
-/* NEW: Error message style */
+/* Error message style (kept but won't be triggered by missing key now) */
 .error-message {
-    color: #dc3545; /* Red */
+    color: #dc3545;
     font-size: 0.9em;
     margin-top: 10px;
     font-weight: bold;

@@ -1,10 +1,5 @@
 // =========================================================================
-// !!! IMPORTANT: REPLACE 'YOUR_GOOGLE_MAPS_API_KEY' WITH YOUR ACTUAL KEY !!!
-// !!! Make sure Geocoding API is enabled for your project in Google Cloud Console. !!!
-// Note: For a client-side (frontend) application, the API key will be visible in the source code.
-// For production applications, it's recommended to proxy requests through a backend server
-// to keep the API key secure. For this contest demo, it's generally acceptable to include it directly.
-const GOOGLE_MAPS_API_KEY = 'AIzaSyBXNpIQlPHIfPDFPtMxo6m8qy6K6JmIpsM'; 
+// API key is no longer needed in app.js as we revert to API simulation.
 // =========================================================================
 
 // --- Define WelcomeScreen component ---
@@ -220,7 +215,7 @@ const AiAnalysisScreen = {
 };
 
 
-// --- Define GeographicalRiskAssessmentScreen component (MODIFIED - Real API Call) ---
+// --- Define GeographicalRiskAssessmentScreen component (REVERTED TO SIMULATION) ---
 const GeographicalRiskAssessmentScreen = {
     props: ['initialData'], // Receives calculatedResults from AiAnalysisScreen
     emits: ['navigate'],
@@ -230,19 +225,17 @@ const GeographicalRiskAssessmentScreen = {
             <p>Mindsurance utilizes the **Google Maps Platform** for advanced location-based risk assessment, which may influence your insurance underwriting. This helps identify regional factors affecting cognitive asset protection and intellectual property risk.</p>
 
             <div class="input-section">
-                <h3>Your Location Data (via Google Geocoding API)</h3>
+                <h3>Your Location Data (Conceptually via Google Geocoding API)</h3>
                 <div class="form-group">
                     <label for="cityRegion">Enter City/Region:</label>
-                    <input type="text" id="cityRegion" v-model="cityRegionInput" placeholder="e.g., San Francisco, New York, Rural Iowa" :disabled="loading">
+                    <input type="text" id="cityRegion" v-model="cityRegionInput" placeholder="e.g., San Francisco, New York, Rural Iowa">
                 </div>
-                <button @click="lookupGeographicRisk" :disabled="loading || !cityRegionInput">
-                    <span v-if="loading">Analyzing...</span>
-                    <span v-else>Analyze Location Risk</span>
+                <button @click="lookupGeographicRisk" :disabled="!cityRegionInput">
+                    Analyze Location Risk (Simulated)
                 </button>
                 <p class="explanation-note">
-                    <small>Mindsurance uses **Google Geocoding API** to resolve this location and feed it into our risk models for insurance underwriting.</small>
+                    <small>Behind the scenes, Mindsurance **would use Google Geocoding API** to resolve this location and feed it into our risk models for insurance underwriting.</small>
                 </p>
-                <p v-if="error" class="error-message">{{ error }}</p>
             </div>
 
             <div v-if="geographicRiskFactor" class="risk-summary">
@@ -257,70 +250,38 @@ const GeographicalRiskAssessmentScreen = {
                 </p>
             </div>
 
-            <button @click="proceedToRegistration" :disabled="!geographicRiskFactor || loading">Proceed to Registration</button>
+            <button @click="proceedToRegistration" :disabled="!geographicRiskFactor">Proceed to Registration</button>
         </div>
     `,
     data() {
         return {
             cityRegionInput: 'San Francisco', // Default value for easier demo
             geographicRiskFactor: null,     // Stores { label: 'High', value: 'high' }
-            resolvedLocation: '',           // Stores the resolved full location name from API
-            loading: false,                 // Loading state for API call
-            error: null                     // Error message for API call
+            resolvedLocation: '',           // Stores the resolved full location name from simulation
         };
     },
     created() {
-        // Optionally, trigger initial lookup on load if default cityRegionInput is set
-        if (this.cityRegionInput && GOOGLE_MAPS_API_KEY !== 'YOUR_GOOGLE_MAPS_API_KEY') {
+        // Trigger initial lookup on load if default cityRegionInput is set
+        if (this.cityRegionInput) {
             this.lookupGeographicRisk();
-        } else if (GOOGLE_MAPS_API_KEY === 'YOUR_GOOGLE_MAPS_API_KEY') {
-            this.error = "Please replace 'YOUR_GOOGLE_MAPS_API_KEY' in app.js with a valid Google Maps Platform API key.";
         }
     },
     methods: {
-        async lookupGeographicRisk() {
-            this.loading = true;
-            this.error = null;
-            this.geographicRiskFactor = null;
-            this.resolvedLocation = '';
+        lookupGeographicRisk() {
+            // Simulated Geocoding API call
+            this.resolvedLocation = this.cityRegionInput; // The resolved location is simply the input for simulation
+            const lowerCaseInput = this.cityRegionInput.toLowerCase();
 
-            if (GOOGLE_MAPS_API_KEY === 'YOUR_GOOGLE_MAPS_API_KEY') {
-                this.error = "Google Maps Platform API key is missing or not configured. Please add your key to app.js.";
-                this.loading = false;
-                return;
+            if (lowerCaseInput.includes('san francisco') || lowerCaseInput.includes('london') || lowerCaseInput.includes('tokyo') || lowerCaseInput.includes('berlin')) {
+                this.geographicRiskFactor = { label: 'Low', value: 'low' };
+            } else if (lowerCaseInput.includes('new york') || lowerCaseInput.includes('shanghai') || lowerCaseInput.includes('paris')) {
+                this.geographicRiskFactor = { label: 'Medium', value: 'medium' };
+            } else if (lowerCaseInput.includes('rural') || lowerCaseInput.includes('desert') || lowerCaseInput.includes('jungle') || lowerCaseInput.includes('isolated') || lowerCaseInput.includes('siberia') || lowerCaseInput.includes('conflict')) {
+                this.geographicRiskFactor = { label: 'High', value: 'high' };
+            } else {
+                this.geographicRiskFactor = { label: 'Neutral', value: 'neutral' }; // Default if not matched
             }
-
-            const encodedAddress = encodeURIComponent(this.cityRegionInput);
-            const geocodingApiUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${GOOGLE_MAPS_API_KEY}`;
-
-            try {
-                const response = await fetch(geocodingApiUrl);
-                const data = await response.json();
-
-                if (data.status === 'OK' && data.results.length > 0) {
-                    this.resolvedLocation = data.results[0].formatted_address;
-                    // Apply our existing risk classification logic based on the resolved address
-                    const lowerCaseLocation = this.resolvedLocation.toLowerCase();
-
-                    if (lowerCaseLocation.includes('san francisco') || lowerCaseLocation.includes('london') || lowerCaseLocation.includes('tokyo') || lowerCaseLocation.includes('berlin')) {
-                        this.geographicRiskFactor = { label: 'Low', value: 'low' };
-                    } else if (lowerCaseLocation.includes('new york') || lowerCaseLocation.includes('shanghai') || lowerCaseLocation.includes('paris')) {
-                        this.geographicRiskFactor = { label: 'Medium', value: 'medium' };
-                    } else if (lowerCaseLocation.includes('rural') || lowerCaseLocation.includes('desert') || lowerCaseLocation.includes('jungle') || lowerCaseLocation.includes('isolated') || lowerCaseLocation.includes('siberia')) { // Added 'siberia' for fun/testing
-                        this.geographicRiskFactor = { label: 'High', value: 'high' };
-                    } else {
-                        this.geographicRiskFactor = { label: 'Neutral', value: 'neutral' };
-                    }
-                } else {
-                    this.error = data.error_message || 'Location not found or Geocoding API error.';
-                    this.geographicRiskFactor = null;
-                }
-            } catch (networkError) {
-                this.error = `Network error during Geocoding API call: ${networkError.message}`;
-                this.geographicRiskFactor = null;
-            } finally {
-                this.loading = false;
-            }
+            console.log('Simulated Geographic Risk:', this.geographicRiskFactor);
         },
         proceedToRegistration() {
             const dataForNextScreen = {
@@ -339,7 +300,7 @@ const GeographicalRiskAssessmentScreen = {
 };
 
 
-// --- Define BlockchainRegistrationScreen component (unchanged, but expects new data structure) ---
+// --- Define BlockchainRegistrationScreen component (already adapted for data structure, now no API key to consider) ---
 const BlockchainRegistrationScreen = {
     props: ['initialData'], // This now receives { calculatedResults, geographicRiskFactor }
     emits: ['navigate'],
@@ -408,7 +369,7 @@ const BlockchainRegistrationScreen = {
 };
 
 
-// --- Define CognitiveInsurancePolicySelectionScreen component (MODIFIED - uses geo risk factor) ---
+// --- Define CognitiveInsurancePolicySelectionScreen component (uses geo risk factor) ---
 const CognitiveInsurancePolicySelectionScreen = {
     props: ['initialData'], // Now receives { calculatedResults, geographicRiskFactor }
     emits: ['navigate'],
@@ -493,7 +454,7 @@ const CognitiveInsurancePolicySelectionScreen = {
         }
     },
     methods: {
-        capitalizeFirstLetter(string) { // Helper for display, added as method for Vue 3
+        capitalizeFirstLetter(string) { // Helper for display
             if (typeof string !== 'string' || string.length === 0) return '';
             return string.charAt(0).toUpperCase() + string.slice(1);
         },
@@ -509,7 +470,7 @@ const CognitiveInsurancePolicySelectionScreen = {
     }
 };
 
-// --- Define SamplePolicyScreen component (unchanged, but expects new data structure) ---
+// --- Define SamplePolicyScreen component (uses geo risk factor) ---
 const SamplePolicyScreen = {
     props: ['initialData'], // This now receives policyDetails including geographicRiskFactor
     emits: ['navigate'],
@@ -585,7 +546,7 @@ const SamplePolicyScreen = {
 const app = Vue.createApp({
     data() {
         return {
-            currentScreen: 'welcome', // Can set to 'geographicalRiskAssessment' for direct testing
+            currentScreen: 'welcome',
             cognitiveData: null
         };
     },
@@ -593,7 +554,7 @@ const app = Vue.createApp({
         WelcomeScreen,
         DataInputScreen,
         AiAnalysisScreen,
-        GeographicalRiskAssessmentScreen, // New component registered here
+        GeographicalRiskAssessmentScreen,
         BlockchainRegistrationScreen,
         CognitiveInsurancePolicySelectionScreen,
         SamplePolicyScreen
