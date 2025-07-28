@@ -1,10 +1,10 @@
-##About Mindsurance
+##About Mindsurance ##
 
-What does the project do?
+#What does the project do?#
 
 Mindsurance is an innovative platform for assessing, immutably recording and insuring human cognitive potential. The project allows you to assess and protect your unique thinking abilities and early ideas before they are physically realized. It assigns a cognitive potential score (CPS), registers the "mental pattern" on the blockchain to provide a legal timestamp, and offers cognitive insurance against risks such as loss of mental abilities, unauthorized use, or delay in the implementation of ideas.
 
-For financial risk assessment and underwriting, Mindsurance uses the Google Maps Platform Geocoding API to include a geographic risk factor.
+#For financial risk assessment and underwriting, Mindsurance uses the Google Maps Platform Geocoding API to include a geographic risk factor.
 
 DEMO here--->https://mindsurance-demo.onrender.com
 VIDEO here--->https://youtu.be/-33z09Yp6C4
