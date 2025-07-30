@@ -1,4 +1,4 @@
-Mindsurance: Insurance for Your Genius Mind
+#Mindsurance: Insurance for Your Genius Mind
 
 Short Tagline: The world's first platform to assess, blockchain-register, and insure your cognitive potential, powered by AI and Google Maps for financial security.
 
