@@ -6,7 +6,7 @@ Demo Walkthrough
 
 A visual demonstration of the application in action:
 
-!\[GIF here](assets/mins-demo.gif)
+\[GIF here](assets/mins-demo.gif)
 
 
 
